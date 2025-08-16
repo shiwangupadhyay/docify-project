@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docify-ai" 
-version = "0.1.0"
+version = "0.1.4" 
 authors = [
   { name="Shiwang Upadhyay", email="shiwangupadhyay8@gmail.com" },
 ]
@@ -17,16 +17,16 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Documentation",
 ]
-
-
 dependencies = [
-    "langchain_google_genai>=0.1.0",
+    "langchain-openai>=0.1.0",
     "langchain-core>=0.1.0",
 ]
 
-[project.urls]
-Homepage = "https://github.com/shiwangupadhyay/docify-project"
-
-
 [project.scripts]
-docify = "docify.cli:main"
+docify = "docify_tool.cli:main"
+
+# --- NEW SECTION ---
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["docify_tool*"]
+exclude = ["tests*"]

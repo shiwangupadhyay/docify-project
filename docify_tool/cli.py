@@ -28,7 +28,7 @@ def main():
 
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        print("❌ Error: GEMINI_API_KEY environment variable not set.")
+        print("❌ Error: GEMINI_API_KEY environment variable not set. set it using $Env:GEMINI_API_KEY=<your-secret-api-key> command in your terminal")
         return
 
     print(f"🔍 Scanning project directory: {os.path.abspath(args.path)}")

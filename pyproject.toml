@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docify-ai-shiwangupadhyay" 
+version = "0.1.0"
+authors = [
+  { name="Shiwang Upadhyay", email="shiwangupadhyay8@gmail.com" },
+]
+description = "An AI-powered README.md generator for local projects."
+readme = "README.md" 
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Documentation",
+]
+
+
+dependencies = [
+    "langchain_google_genai>=0.1.0",
+    "langchain-core>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/shiwangupadhyay/docify-project"
+
+
+[project.scripts]
+docify = "docify.cli:main"

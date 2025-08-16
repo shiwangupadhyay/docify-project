@@ -24,8 +24,7 @@ Stop writing docs and start shipping code.
 
 Docify is published on PyPI and can be installed on any machine with Python 3.8+ using pip.
 
-pip install docify-ai-yourusername
-*(Note:* Replace `docify-ai-yourusername` with the unique name you chose in *your `pyproject.toml`)*
+pip install docify-ai
 
 ## Usage
 

@@ -27,8 +27,14 @@ def main():
     args = parser.parse_args()
 
     api_key = os.getenv("GEMINI_API_KEY")
+
     if not api_key:
-        print("❌ Error: GEMINI_API_KEY environment variable not set. set it using $Env:GEMINI_API_KEY=<your-secret-api-key> command in your terminal")
+        print(""""First, you need to make your Google Gemini API key available as an environment variable. This is a one-time setup per machine. You can get a key from visiting the https://aistudio.google.com/app/apikey \n
+For Windows (PowerShell) :-
+$Env:GEMINI_API_KEY="your-secret-api-key"
+For macOS / Linux (bash) :-
+export GEMINI_API_KEY='your-secret-api-key'
+""")
         return
 
     print(f"🔍 Scanning project directory: {os.path.abspath(args.path)}")

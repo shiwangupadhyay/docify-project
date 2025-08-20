@@ -2,20 +2,6 @@
 
 Instantly generate beautiful, comprehensive `README.md` files for your local projects using the power of AI, supporting both Google Gemini and OpenAI GPT models.
 
-## Project Structure 📂
-
-```
-.
-├── docify_tool/
-│   ├── __init__.py
-│   ├── cli.py          # Command-line interface logic
-│   ├── generator.py    # AI model (Gemini/OpenAI) interaction
-│   └── scanner.py      # Project context scanning and file parsing
-├── pyproject.toml      # Project metadata and dependencies
-├── LICENSE             # Project license (MIT)
-├── README.md           # This README file
-└── CHANGELOG.md        # Project version history
-```
 
 ## Key Features ✨
 
@@ -25,12 +11,6 @@ Instantly generate beautiful, comprehensive `README.md` files for your local pro
 *   **🔑 API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI.
 *   **🚀 Fast and Efficient**: Go from a messy project folder to a polished README in under a minute.
 *   **🔧 Customizable Output**: Easily specify the project path to analyze and the desired output file name.
-
-## Technologies Used 🛠️
-
-*   **Python**: The core programming language (Python 3.8+ required).
-*   **Google Generative AI**: For integrating with the Google Gemini models (`google-generativeai`).
-*   **OpenAI**: For integrating with OpenAI GPT models (`openai`).
 
 ## Installation 📦
 

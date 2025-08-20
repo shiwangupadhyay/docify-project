@@ -1,20 +1,40 @@
 # Docify AI 🚀
 
-**Instantly generate beautiful, comprehensive `README.md` files for your local projects using the power of AI.**
+Instantly generate beautiful, comprehensive `README.md` files for your local projects using the power of AI, supporting both Google Gemini and OpenAI GPT models.
 
+## Project Structure 📂
+
+```
+.
+├── docify_tool/
+│   ├── __init__.py
+│   ├── cli.py          # Command-line interface logic
+│   ├── generator.py    # AI model (Gemini/OpenAI) interaction
+│   └── scanner.py      # Project context scanning and file parsing
+├── pyproject.toml      # Project metadata and dependencies
+├── LICENSE             # Project license (MIT)
+├── README.md           # This README file
+└── CHANGELOG.md        # Project version history
+```
 
 ## Key Features ✨
 
-*   **🤖 AI-Powered Content Generation**: Leverages large language models (specifically Google Gemini) to write human-like, technical documentation.
+*   **🤖 AI-Powered Content Generation**: Leverages large language models (Google Gemini and OpenAI GPT) to write human-like, technical documentation.
 *   **📂 Intelligent Code Analysis**: Scans your entire project directory, intelligently ignoring irrelevant files and directories, to understand its purpose, technologies, and structure.
-*   **⚙️ Simple Command-Line Interface**: Generate a complete README with a single, intuitive command: `docify`.
+*   **⚙️ Flexible AI Client Selection**: Choose between Google Gemini and OpenAI GPT models for content generation directly from the command line.
+*   **🔑 API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI.
 *   **🚀 Fast and Efficient**: Go from a messy project folder to a polished README in under a minute.
-*   **🔧 Customizable**: Easily specify the project path to analyze and the desired output file name.
+*   **🔧 Customizable Output**: Easily specify the project path to analyze and the desired output file name.
 
+## Technologies Used 🛠️
+
+*   **Python**: The core programming language (Python 3.8+ required).
+*   **Google Generative AI**: For integrating with the Google Gemini models (`google-generativeai`).
+*   **OpenAI**: For integrating with OpenAI GPT models (`openai`).
 
 ## Installation 📦
 
-Docify is published on PyPI and can be installed on any machine with Python 3.8+ using `pip`.
+Docify-AI is available on PyPI and can be installed on any system with Python 3.8 or newer using `pip`.
 
 ```bash
 pip install docify-ai
@@ -22,43 +42,76 @@ pip install docify-ai
 
 ## Usage 🚀
 
-Using Docify is incredibly simple.
+Using Docify-AI is straightforward, involving a one-time API key setup and a simple command execution.
 
 ### 1. Set Your API Key
 
-First, you need to make your **Google Gemini API key** available as an environment variable. This is a one-time setup per machine. You can get a key from the [Google AI Studio](https://aistudio.google.com/app/apikey) for free.
+Docify-AI requires an API key for the chosen AI model (Google Gemini or OpenAI). You can obtain a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) for Gemini, or from the [OpenAI platform](https://platform.openai.com/api-keys) for OpenAI.
 
-**macOS / Linux:**
+Once you have your key, set it as an environment variable:
+
+*   For **Google Gemini**: `GEMINI_API_KEY`
+*   For **OpenAI**: `OPENAI_API_KEY`
+
+**For macOS / Linux (bash/zsh):**
 
 ```bash
-export GEMINI_API_KEY='your-secret-api-key'
+export GEMINI_API_KEY='your-gemini-secret-api-key'
+# OR
+export OPENAI_API_KEY='your-openai-secret-api-key'
 ```
-*(To make this permanent, add the line to your `~/.zshrc` or `~/.bashrc` file.)*
+*(To make this permanent across terminal sessions, add the line to your shell's configuration file, e.g., `~/.zshrc` or `~/.bashrc`.)*
 
-**Windows (PowerShell):**
+**For Windows (PowerShell):**
 
 ```powershell
-$Env:GEMINI_API_KEY="your-secret-api-key"
+$Env:GEMINI_API_KEY="your-gemini-secret-api-key"
+# OR
+$Env:OPENAI_API_KEY="your-openai-secret-api-key"
 ```
 
-### 2. Run Docify
+Alternatively, you can pass the API key directly via the `--key` argument, which will override the environment variable.
 
-Navigate to any project directory you want to document and run the command:
+### 2. Run Docify-AI
+
+Navigate to the root directory of the project you wish to document and simply run the `docify` command. By default, it uses the Gemini model.
 
 ```bash
 docify
 ```
-That's it! The tool will scan the current directory and create a `README.md` file with the AI-generated content.
+The tool will scan the current directory and generate a `README.md` file with AI-powered content.
 
 ### Command-Line Options
 
-You can also specify the path to your project and the desired output file using the following options:
+You can customize the behavior of Docify-AI using the following command-line arguments:
 
-*   **`--path`**: The root directory of the project to document. Defaults to the current directory (`.`).
-*   **`--output`**: The name of the output file. Defaults to `README.md`.
+*   **`--path <directory>`**: Specifies the root directory of the project to be documented. Defaults to the current working directory (`.`).
+*   **`--output <filename>`**: Defines the name of the output markdown file. Defaults to `README.md`.
+*   **`--client <openai|gemini>`**: Choose the AI client to use for generation. Options are `openai` or `gemini` (default: `gemini`). Case-insensitive.
+*   **`--key <your-api-key>`**: Provide your API key directly. This will take precedence over environment variables.
 
-**Example:**
+**Examples:**
 
-```bash
-docify --path /path/to/my-other-project --output DOCS.md
-```
+1.  To document a project located at `/path/to/my-other-project` and save the output to `DOCS.md` using the default Gemini model:
+
+    ```bash
+    docify --path /path/to/my-other-project --output DOCS.md
+    ```
+
+2.  To use the OpenAI client for documentation:
+
+    ```bash
+    docify --client openai
+    ```
+
+3.  To use the OpenAI client and provide the API key directly (overriding any environment variable):
+
+    ```bash
+    docify --client openai --key sk-YOUR_OPENAI_API_KEY
+    ```
+
+4.  To document a project using the Gemini client and specify the output file:
+
+    ```bash
+    docify --client gemini --output project-readme.md
+    ```

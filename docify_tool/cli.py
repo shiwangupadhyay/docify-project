@@ -1,7 +1,8 @@
 import os
 import argparse
 from .scanner import get_project_context
-from .generator import generate_readme
+from .generator import generate_readme_gemini, generate_readme_openai
+
 
 def main():
     """
@@ -23,36 +24,71 @@ def main():
         default='README.md',
         help='The name of the output file. Defaults to README.md.'
     )
-    
+    parser.add_argument(
+        '--client',
+        type=lambda s: s.lower(),
+        choices=['openai', 'gemini'],
+        default='gemini',
+        help='Choose the client: openai or gemini (default: gemini). Case-insensitive.'
+    )
+    parser.add_argument(
+        '--key',
+        type=str,
+        default=None,
+        help='Put the API key of your selected client (this will be preferred over environment variable).'
+    )
+
     args = parser.parse_args()
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    if args.client == 'gemini':
+        api_key = args.key or os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            print("""⚠️ No Gemini API key found.
 
-    if not api_key:
-        print(""""First, you need to make your Google Gemini API key available as an environment variable. This is a one-time setup per machine. You can get a key from visiting the https://aistudio.google.com/app/apikey \n
-For Windows (PowerShell) :-
+Either pass it with --key argument or set an environment variable:
+
+For Windows (PowerShell):
 $Env:GEMINI_API_KEY="your-secret-api-key"
-For macOS / Linux (bash) :-
+
+For macOS / Linux (bash):
 export GEMINI_API_KEY='your-secret-api-key'
 """)
-        return
+            return
+    else:
+        api_key = args.key or os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            print("""⚠️ No OpenAI API key found.
+
+Either pass it with --key argument or set an environment variable:
+
+For Windows (PowerShell):
+$Env:OPENAI_API_KEY="your-secret-api-key"
+
+For macOS / Linux (bash):
+export OPENAI_API_KEY='your-secret-api-key'
+""")
+            return
 
     print(f"🔍 Scanning project directory: {os.path.abspath(args.path)}")
-    
+
     project_context = get_project_context(args.path)
-    
+
     if not project_context.strip():
         print("⚠️ Warning: No readable files found in the specified directory.")
         return
-        
-    readme_content = generate_readme(project_context, api_key)
-    
+
+    if args.client == 'openai':
+        readme_content = generate_readme_openai(project_context, api_key)
+    else:
+        readme_content = generate_readme_gemini(project_context, api_key)
+
     try:
         with open(args.output, 'w', encoding='utf-8') as f:
             f.write(readme_content)
         print(f"✅ Successfully generated and saved to {args.output}")
     except Exception as e:
         print(f"❌ Error saving file: {e}")
+
 
 if __name__ == "__main__":
     main()

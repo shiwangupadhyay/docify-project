@@ -1,11 +1,11 @@
 [project]
 name = "docify-ai" 
-version = "1.0.0" 
+version = "1.1.0" 
 authors = [
-  { name="Shiwang Upadhyay", email="shiwangupadhyay8@gmail.com" },
+  { name = "Shiwang Upadhyay"}, 
+  {email = "shiwangupadhyay8@gmail.com" }
 ]
 description = "An AI-powered README.md generator for local projects."
-readme = "README.md" 
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -14,9 +14,14 @@ classifiers = [
     "Topic :: Software Development :: Documentation",
 ]
 dependencies = [
-    "langchain-google-genai>=0.1.0",
-    "langchain-core>=0.1.0",
+    "google-generativeai>=0.8.5",
+    "openai>=1.100.2"
 ]
+
+[tool.setuptools]
+
+[tool.setuptools.dynamic]
+readme = { file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown" }
 
 [project.scripts]
 docify = "docify_tool.cli:main"
@@ -29,3 +34,4 @@ exclude = ["tests*"]
 [project.urls]
 Homepage = "https://github.com/shiwangupadhyay/docify-project"
 Repository = "https://github.com/shiwangupadhyay/docify-project"
+Issues = "https://github.com/shiwangupadhyay/docify-project/issues"

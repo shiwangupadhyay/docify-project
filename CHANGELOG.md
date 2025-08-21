@@ -1,3 +1,6 @@
+## 1.2.0 - 2025-08-21
+- Added `-t` or `--test` option, to generate pytest supported test directory including test modules for all the features of your project.
+
 ## 1.1.1 - 2025-08-20
 - fixed project description not visible issue
 

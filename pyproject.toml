@@ -1,6 +1,6 @@
 [project]
 name = "docify-ai" 
-version = "1.1.1" 
+version = "1.2.0" 
 dynamic = ["readme"]
 authors = [
   { name = "Shiwang Upadhyay"}, 
@@ -17,6 +17,18 @@ classifiers = [
 dependencies = [
     "google-generativeai>=0.8.5",
     "openai>=1.100.2"
+]
+keywords = [
+    "ai",
+    "documentation",
+    "readme-generator",
+    "tests-generator",
+    "mermaid-diagrams",
+    "openai",
+    "gemini",
+    "automation",
+    "developer-tools",
+    "cli"
 ]
 
 [tool.setuptools]

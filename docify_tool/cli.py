@@ -46,10 +46,21 @@ def main():
         action='store_true',
         help='Generate pytest test files instead of README.'
     )
+    parser.add_argument(
+        '--ignore-dirs',
+        nargs='+',
+        default=['.git', '__pycache__', 'node_modules', '.vscode', 'venv', '.venv', 'dist', 'build'],
+        help="A space-separated list of directory names to ignore."
+    )
+    parser.add_argument(
+        '--ignore-exts',
+        nargs='+',
+        default=['.tmp','.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'],
+        help="A space-separated list of file extensions to ignore (e.g., pyc log svg)."
+    )
 
     args = parser.parse_args()
 
-    # --- API key handling ---
     if args.client == 'gemini':
         api_key = args.key or os.getenv("GEMINI_API_KEY")
         if not api_key:
@@ -81,7 +92,11 @@ export OPENAI_API_KEY='your-secret-api-key'
 
     print(f"🔍 Scanning project directory: {os.path.abspath(args.path)}")
 
-    project_context = get_project_context(args.path)
+    project_context = get_project_context(
+        args.path, 
+        ignore_dirs=args.ignore_dirs, 
+        ignore_exts=args.ignore_exts
+    )
 
     if not project_context.strip():
         print("Warning: No readable files found in the specified directory.")

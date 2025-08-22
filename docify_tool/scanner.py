@@ -1,14 +1,10 @@
 import os
 
-def get_project_context(root_dir, ignore_dirs=None, ignore_exts=None):
+def get_project_context(root_dir, ignore_dirs, ignore_exts):
     """
     Walks through a directory, gets the file structure and content,
     and returns it as a single formatted string.
     """
-    if ignore_dirs is None:
-        ignore_dirs = {'.git', '__pycache__', 'node_modules', '.vscode', 'venv', '.venv', 'dist', 'build'}
-    if ignore_exts is None:
-        ignore_exts = {'.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'}
 
     full_context = []
     

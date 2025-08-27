@@ -1,6 +1,7 @@
 [project]
 name = "docify-ai" 
 version = "1.4.0" 
+license = { file = "LICENSE"}
 dynamic = ["readme"]
 authors = [
   { name = "Shiwang Upadhyay"}, 

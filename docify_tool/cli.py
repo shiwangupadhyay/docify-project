@@ -4,7 +4,10 @@ import json
 from .scanner import get_project_context
 from .generator import (
     generate_readme_gemini, generate_readme_openai,
-    generate_test_gemini, generate_test_openai
+    generate_test_gemini, generate_test_openai,
+    generate_dockerfile_gemini, generate_dockerfile_openai,
+    generate_gha_gemini, generate_gha_openai,
+    generate_project_init_gemini, generate_project_init_openai
 )
 
 
@@ -26,7 +29,7 @@ def main():
         '--output', '-o',
         type=str,
         default=None,
-        help='The name of the output file/folder. Defaults: README.md for docs, tests/ for tests.'
+        help='The name of the output file/folder. Defaults: README.md, tests/, Dockerfile, or .github/workflows/ci.yml.'
     )
     parser.add_argument(
         '--client', '-c',
@@ -44,23 +47,39 @@ def main():
     parser.add_argument(
         '-t', '--test',
         action='store_true',
-        help='Generate pytest test files instead of README.'
+        help='Generate pytest test files.'
+    )
+    parser.add_argument(
+        '--docker',
+        action='store_true',
+        help='Generate a Dockerfile for this project.'
+    )
+    parser.add_argument(
+        '--gha',
+        action='store_true',
+        help='Generate a GitHub Actions workflow (CI/CD).'
+    )
+    parser.add_argument(
+        '--init',
+        type=str,
+        help='Bootstrap a new Python project with the given project name.'
     )
     parser.add_argument(
         '--ignore-dirs',
         nargs='+',
-        default=['.git', '__pycache__', 'node_modules', '.vscode', 'venv', '.venv', 'dist', 'build'],
+        default=['.git', '__pycache__', 'node_modules', '.vscode', 'venv', '.venv', 'dist', 'build', '.github'],
         help="A space-separated list of directory names to ignore."
     )
     parser.add_argument(
         '--ignore-exts',
         nargs='+',
         default=['.tmp','.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'],
-        help="A space-separated list of file extensions to ignore (e.g., pyc log svg)."
+        help="A space-separated list of file extensions to ignore."
     )
 
     args = parser.parse_args()
 
+    # --- API key handling ---
     if args.client == 'gemini':
         api_key = args.key or os.getenv("GEMINI_API_KEY")
         if not api_key:
@@ -68,10 +87,10 @@ def main():
 
 Either pass it with --key argument or set an environment variable:
 
-For Windows (PowerShell):
+Windows (PowerShell):
 $Env:GEMINI_API_KEY="your-secret-api-key"
 
-For macOS / Linux (bash):
+macOS / Linux (bash):
 export GEMINI_API_KEY='your-secret-api-key'
 """)
             return
@@ -82,19 +101,36 @@ export GEMINI_API_KEY='your-secret-api-key'
 
 Either pass it with --key argument or set an environment variable:
 
-For Windows (PowerShell):
+Windows (PowerShell):
 $Env:OPENAI_API_KEY="your-secret-api-key"
 
-For macOS / Linux (bash):
+macOS / Linux (bash):
 export OPENAI_API_KEY='your-secret-api-key'
 """)
             return
 
-    print(f"🔍 Scanning project directory: {os.path.abspath(args.path)}")
+    # --- Project Init  ---
+    if args.init:
+        project_name = args.init
+        print(f"Bootstrapping new Python project: {project_name}")
+        if args.client == 'openai':
+            scaffold = generate_project_init_openai(project_name, api_key)
+        else:
+            scaffold = generate_project_init_gemini(project_name, api_key)
 
+        for filepath, content in scaffold.items():
+            out_path = os.path.join(project_name, filepath)
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(content)
+        print(f"Project {project_name} initialized successfully.")
+        return
+
+    # --- Scanning project context ---
+    print(f"Scanning project directory: {os.path.abspath(args.path)}")
     project_context = get_project_context(
-        args.path, 
-        ignore_dirs=args.ignore_dirs, 
+        args.path,
+        ignore_dirs=args.ignore_dirs,
         ignore_exts=args.ignore_exts
     )
 
@@ -111,13 +147,10 @@ export OPENAI_API_KEY='your-secret-api-key'
             tests_json = generate_test_gemini(project_context, api_key)
 
         import re
-
         try:
             cleaned = tests_json.strip()
             cleaned = re.sub(r"^```(?:json)?", "", cleaned)
             cleaned = re.sub(r"```$", "", cleaned)
-            cleaned = cleaned.strip()
-
             tests = json.loads(cleaned)
 
             for filepath, content in tests.items():
@@ -131,7 +164,40 @@ export OPENAI_API_KEY='your-secret-api-key'
             print("\n--- Raw output from model (for debugging) ---\n")
             print(tests_json)
 
-    # --- README/Docs Generation ---
+    # --- Dockerfile Generation ---
+    elif args.docker:
+        print("Mode: Generating Dockerfile...")
+        if args.client == 'openai':
+            docker_content = generate_dockerfile_openai(project_context, api_key)
+        else:
+            docker_content = generate_dockerfile_gemini(project_context, api_key)
+
+        output_file = args.output or "Dockerfile"
+        try:
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(docker_content)
+            print(f"Successfully generated Dockerfile at {output_file}")
+        except Exception as e:
+            print(f"Error saving Dockerfile: {e}")
+
+    # --- GitHub Actions Workflow Generation ---
+    elif args.gha:
+        print("Mode: Generating GitHub Actions workflow...")
+        if args.client == 'openai':
+            gha_content = generate_gha_openai(project_context, api_key)
+        else:
+            gha_content = generate_gha_gemini(project_context, api_key)
+
+        output_file = args.output or ".github/workflows/ci.yml"
+        try:
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(gha_content)
+            print(f"Successfully generated GitHub Actions workflow at {output_file}")
+        except Exception as e:
+            print(f"Error saving GitHub Actions workflow: {e}")
+
+    # --- README/Docs Generation (default) ---
     else:
         print("Mode: Generating README/docs...")
         if args.client == 'openai':

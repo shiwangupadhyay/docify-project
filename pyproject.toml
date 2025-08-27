@@ -1,6 +1,6 @@
 [project]
 name = "docify-ai" 
-version = "1.3.0" 
+version = "1.4.0" 
 dynamic = ["readme"]
 authors = [
   { name = "Shiwang Upadhyay"}, 
@@ -23,6 +23,9 @@ keywords = [
     "documentation",
     "readme-generator",
     "tests-generator",
+    "project-structure",
+    "docker-template",
+    "cicd-workflows-template",
     "mermaid-diagrams",
     "openai",
     "gemini",

@@ -1,3 +1,5 @@
+## 1.4.0 - 2025-08-28
+- Added `--docker` , `--gha` and `--init` options, to generate the project aware Dockerfile, Github Actions worflow Yaml file and to generate a project structure for a python project.
 ## 1.3.0 - 2025-08-22
 - Added `--ignore-dirs` and `--ignore-exts` option, to ignore the irrelevant or unwanted directories and files to generate the docs/readme or tests.
 

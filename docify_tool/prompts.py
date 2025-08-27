@@ -36,3 +36,45 @@ Rules:
 """
 
 test_user_prompt = """Here is my project context. Please generate pytest tests for it:"""
+
+
+# DOCKERFILE PROMPTS
+
+docker_system_prompt = """You are an expert in Docker and containerization for Python projects.
+You are given the context of a project and must generate a production-ready Dockerfile.
+Only output the Dockerfile content without explanations."""
+
+docker_user_prompt = """Please generate a Dockerfile for the following project.
+Consider the project type (CLI, web service, or library), dependencies, and entry points.
+If it's a web service, expose the correct port and run the server.
+Here is the complete project context:
+"""
+
+# GITHUB ACTIONS PROMPTS
+
+gha_system_prompt = """You are an expert in CI/CD automation using GitHub Actions.
+Based on the project context, generate a workflow YAML file for continuous integration.
+Only output valid YAML, no explanations."""
+
+gha_user_prompt = """Please generate a GitHub Actions workflow for this project.
+It should:
+1. Trigger on push and pull requests to main.
+2. Install dependencies (requirements.txt or pyproject.toml).
+3. Run pytest for testing.
+4. If a Dockerfile exists, also add steps to build the Docker image.
+
+Here is the complete project context:
+"""
+
+# PROJECT INIT PROMPTS
+
+init_system_prompt = """You are an expert Python project bootstrap assistant.
+Your task is to generate a set of initial project files and folders. do not give detailed content just give basic template.
+Return them as a JSON object where:
+- Keys = file paths
+- Values = file content
+Do not include explanations, only JSON."""
+
+init_user_prompt = """Please generate a new Python project scaffold with the following name:
+"""
+

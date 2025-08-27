@@ -2,20 +2,21 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/docify-ai.svg?style=flat-square)](https://pypi.org/project/docify-ai/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/docify-ai.svg?style=flat-square)](https://pypi.org/project/docify-ai/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Downloads](https://static.pepy.tech/badge/docify-ai)](https://pepy.tech/project/docify-ai)
 
-A versatile AI-powered command-line tool for instantly generating comprehensive `README.md` files, pytest tests, and Mermaid workflow diagrams for your local projects, powered by Google Gemini and OpenAI GPT models.
+A versatile AI-powered command-line tool for instantly generating comprehensive `README.md` files, pytest tests, Dockerfiles, and GitHub Actions CI/CD workflows for your local projects, powered by Google Gemini and OpenAI GPT models.
 
 
 ## Key Features ✨
 
-*   **🤖 AI-Powered Content Generation**: Leverages large language models (Google Gemini and OpenAI GPT) to write human-like, technical documentation and tests.
-*   **💡 Multi-Format Output**: Generate `README.md` files or receive runnable pytest tests.
-*   **📂 Intelligent Code Analysis**: Scans your entire project directory, intelligently ignoring irrelevant files and directories, to understand its purpose, technologies, and structure.
-*   **⚙️ Flexible AI Client Selection**: Choose between Google Gemini and OpenAI GPT models for content generation directly from the command line.
-*   **🔑 API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI.
-*   **🚀 Fast and Efficient**: Go from a messy project folder to a polished README, tests, or workflows in under a minute.
-*   **🔧 Customizable Output**: Easily specify the project path to analyze and the desired output file or directory name.
+*   **🤖 AI-Powered Content Generation**: Leverages large language models (Google Gemini and OpenAI GPT) to write human-quality `README.md` files, `pytest` tests, `Dockerfile`s, and GitHub Actions CI/CD workflows.
+*   **💡 Versatile Output Formats**: Generate comprehensive project documentation, runnable unit tests, containerization configurations, or automation workflows.
+*   **📂 Intelligent Project Analysis**: Scans your project directory, intelligently ignoring irrelevant files and directories (configurable with `--ignore-dirs` and `--ignore-exts`), to deeply understand its purpose, technologies, and structure.
+*   **⚙️ Flexible AI Client Selection**: Seamlessly choose between Google Gemini and OpenAI GPT models for content generation directly from the command line.
+*   **🔑 Robust API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI for enhanced security and convenience.
+*   **🚀 Fast Project Scaffolding**: Bootstrap new Python projects with an intelligent, AI-generated initial structure using the `--init` option.
+*   **⏱️ Rapid Generation**: Transform a nascent project or an existing codebase into a fully documented, tested, and deployable application in moments.
+*   **🔧 Highly Customizable**: Specify project paths, output file names, and tailor content generation with various command-line options.
 
 
 ## Installation 📦
@@ -71,20 +72,23 @@ The tool will scan the current directory and generate a `README.md` file with AI
 
 You can customize the behavior of Docify-AI using the following command-line arguments:
 
-*   **`--path <directory>` / `-p <directory>`**: Specifies the root directory of the project to be documented. Defaults to the current working directory (`.`).
-*   **`--output <filename>` / `-o <filename>`**: Defines the name of the output file/folder. Defaults: `README.md` for docs, `tests/` for tests, `WORKFLOWS.md` for workflows.
+*   **`--path <directory>` / `-p <directory>`**: Specifies the root directory of the project to be analyzed. Defaults to the current working directory (`.`).
+*   **`--output <filename_or_dir>` / `-o <filename_or_dir>`**: Defines the name of the output file or directory. Defaults: `README.md` for docs, `tests/` for tests, `Dockerfile` for Docker, `.github/workflows/ci.yml` for GitHub Actions.
 *   **`--client <openai|gemini>` / `-c <openai|gemini>`**: Choose the AI client to use for generation. Options are `openai` or `gemini` (default: `gemini`). Case-insensitive.
 *   **`--key <your-api-key>` / `-k <your-api-key>`**: Provide your API key directly. This will take precedence over environment variables.
 *   **`--test` / `-t`**: Generate `pytest` test files instead of a README.
-*   **`--ignore-dirs <dir1> <dir2>...`**: A space-separated list of directory names to ignore during scanning. (e.g., `.git __pycache__ node_modules`).
+*   **`--docker`**: Generate a `Dockerfile` for the project.
+*   **`--gha`**: Generate a GitHub Actions (CI/CD) workflow.
+*   **`--init <project_name>`**: Bootstrap a new Python project with the given project name, creating a basic scaffold.
+*   **`--ignore-dirs <dir1> <dir2>...`**: A space-separated list of directory names to ignore during scanning (e.g., `.git __pycache__ node_modules`).
 *   **`--ignore-exts <ext1> <ext2>...`**: A space-separated list of file extensions to ignore (e.g., `.tmp .pyc .log`).
 
 **Examples:**
 
-1.  To document a project located at `/path/to/my-other-project` and save the output to `DOCS.md` using the default Gemini model:
+1.  To document a project located at `/path/to/my-other-project` and save the output to `PROJECT_DOCS.md` using the default Gemini model:
 
     ```bash
-    docify --path /path/to/my-other-project --output DOCS.md
+    docify --path /path/to/my-other-project --output PROJECT_DOCS.md
     ```
 
 2.  To use the OpenAI client for README generation:
@@ -103,4 +107,22 @@ You can customize the behavior of Docify-AI using the following command-line arg
 
     ```bash
     docify --test --client gemini --ignore-dirs dist build
+    ```
+
+5.  To generate a `Dockerfile` for the current project:
+
+    ```bash
+    docify --docker
+    ```
+
+6.  To generate a GitHub Actions workflow for the current project:
+
+    ```bash
+    docify --gha
+    ```
+
+7.  To initialize a new Python project named `my_new_app`:
+
+    ```bash
+    docify --init my_new_app
     ```

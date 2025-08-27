@@ -2,6 +2,7 @@
 name = "docify-ai" 
 version = "1.4.0" 
 dynamic = ["readme"]
+license = { file = "LICENSE" }
 authors = [
   { name = "Shiwang Upadhyay"}, 
   {email = "shiwangupadhyay8@gmail.com" }
@@ -10,7 +11,6 @@ description = "An AI-powered README.md generator for local projects."
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Documentation",
 ]

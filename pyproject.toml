@@ -1,6 +1,6 @@
 [project]
 name = "docify-ai" 
-version = "1.4.0" 
+version = "1.5.0" 
 dynamic = ["readme"]
 authors = [
   { name = "Shiwang Upadhyay"}, 
@@ -30,7 +30,8 @@ keywords = [
     "gemini",
     "automation",
     "developer-tools",
-    "cli"
+    "cli",
+    "docstrings"
 ]
 
 [tool.setuptools]

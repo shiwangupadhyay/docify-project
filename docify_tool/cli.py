@@ -1,14 +1,9 @@
 import os
 import argparse
 import json
+import re
 from .scanner import get_project_context
-from .generator import (
-    generate_readme_gemini, generate_readme_openai,
-    generate_test_gemini, generate_test_openai,
-    generate_dockerfile_gemini, generate_dockerfile_openai,
-    generate_gha_gemini, generate_gha_openai,
-    generate_project_init_gemini, generate_project_init_openai
-)
+from .generator import Generator
 
 
 def main():
@@ -65,6 +60,11 @@ def main():
         help='Bootstrap a new Python project with the given project name.'
     )
     parser.add_argument(
+        '--docstring',
+        type=str,
+        help='Add docstrings to a given Python file (relative path).'
+    )
+    parser.add_argument(
         '--ignore-dirs',
         nargs='+',
         default=['.git', '__pycache__', 'node_modules', '.vscode', 'venv', '.venv', 'dist', 'build', '.github'],
@@ -73,7 +73,7 @@ def main():
     parser.add_argument(
         '--ignore-exts',
         nargs='+',
-        default=['.tmp','.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'],
+        default=['.tmp', '.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'],
         help="A space-separated list of file extensions to ignore."
     )
 
@@ -109,14 +109,17 @@ export OPENAI_API_KEY='your-secret-api-key'
 """)
             return
 
-    # --- Project Init  ---
+    # --- Initialize Generator ---
+    generator = Generator(api_key)
+
+    # --- Project Init ---
     if args.init:
         project_name = args.init
         print(f"Bootstrapping new Python project: {project_name}")
         if args.client == 'openai':
-            scaffold = generate_project_init_openai(project_name, api_key)
+            scaffold = generator.generate_project_init_openai(project_name)
         else:
-            scaffold = generate_project_init_gemini(project_name, api_key)
+            scaffold = generator.generate_project_init_gemini(project_name)
 
         for filepath, content in scaffold.items():
             out_path = os.path.join(project_name, filepath)
@@ -124,6 +127,34 @@ export OPENAI_API_KEY='your-secret-api-key'
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(content)
         print(f"Project {project_name} initialized successfully.")
+        return
+
+    # --- Docstring Generation ---
+    if args.docstring:
+        file_path = args.docstring
+        if not os.path.exists(file_path):
+            print(f"Error: File '{file_path}' not found.")
+            return
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            code_content = f.read()
+
+        print(f"Adding docstrings to {file_path}...")
+        if args.client == 'openai':
+            updated_code = generator.generate_docstring_openai(code_content)
+        else:
+            updated_code = generator.generate_docstring_gemini(code_content)
+
+        try:
+            cleaned = updated_code.strip()
+            cleaned = re.sub(r"^```(?:python)?", "", cleaned, flags=re.MULTILINE).strip()
+            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE).strip()
+
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(cleaned)
+            print(f"Docstrings successfully added to {file_path}")
+        except Exception as e:
+            print(f"Error saving updated file: {e}")
         return
 
     # --- Scanning project context ---
@@ -142,11 +173,10 @@ export OPENAI_API_KEY='your-secret-api-key'
     if args.test:
         print("Mode: Generating pytest tests...")
         if args.client == 'openai':
-            tests_json = generate_test_openai(project_context, api_key)
+            tests_json = generator.generate_test_openai(project_context)
         else:
-            tests_json = generate_test_gemini(project_context, api_key)
+            tests_json = generator.generate_test_gemini(project_context)
 
-        import re
         try:
             cleaned = tests_json.strip()
             cleaned = re.sub(r"^```(?:json)?", "", cleaned)
@@ -168,9 +198,9 @@ export OPENAI_API_KEY='your-secret-api-key'
     elif args.docker:
         print("Mode: Generating Dockerfile...")
         if args.client == 'openai':
-            docker_content = generate_dockerfile_openai(project_context, api_key)
+            docker_content = generator.generate_dockerfile_openai(project_context)
         else:
-            docker_content = generate_dockerfile_gemini(project_context, api_key)
+            docker_content = generator.generate_dockerfile_gemini(project_context)
 
         output_file = args.output or "Dockerfile"
         try:
@@ -184,9 +214,9 @@ export OPENAI_API_KEY='your-secret-api-key'
     elif args.gha:
         print("Mode: Generating GitHub Actions workflow...")
         if args.client == 'openai':
-            gha_content = generate_gha_openai(project_context, api_key)
+            gha_content = generator.generate_gha_openai(project_context)
         else:
-            gha_content = generate_gha_gemini(project_context, api_key)
+            gha_content = generator.generate_gha_gemini(project_context)
 
         output_file = args.output or ".github/workflows/ci.yml"
         try:
@@ -201,9 +231,9 @@ export OPENAI_API_KEY='your-secret-api-key'
     else:
         print("Mode: Generating README/docs...")
         if args.client == 'openai':
-            readme_content = generate_readme_openai(project_context, api_key)
+            readme_content = generator.generate_readme_openai(project_context)
         else:
-            readme_content = generate_readme_gemini(project_context, api_key)
+            readme_content = generator.generate_readme_gemini(project_context)
 
         output_file = args.output or "README.md"
         try:

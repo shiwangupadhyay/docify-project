@@ -1,3 +1,6 @@
+## 1.5.0 - 2025-09-05
+- 📝 Added --docstring option to automatically generate PEP 257–compliant docstrings for Python functions, classes, and modules.
+
 ## 1.4.0 - 2025-08-28
 - Added `--docker` , `--gha` and `--init` options, to generate the project aware Dockerfile, Github Actions worflow Yaml file and to generate a project structure for a python project.
 ## 1.3.0 - 2025-08-22

@@ -6,7 +6,6 @@
 
 A versatile AI-powered command-line tool for instantly generating comprehensive `README.md` files, pytest tests, Dockerfiles, and GitHub Actions CI/CD workflows for your local projects, powered by Google Gemini and OpenAI GPT models.
 
-
 ## Key Features ✨
 
 *   **🤖 AI-Powered Content Generation**: Leverages large language models (Google Gemini and OpenAI GPT) to write human-quality `README.md` files, `pytest` tests, `Dockerfile`s, and GitHub Actions CI/CD workflows.
@@ -15,9 +14,9 @@ A versatile AI-powered command-line tool for instantly generating comprehensive 
 *   **⚙️ Flexible AI Client Selection**: Seamlessly choose between Google Gemini and OpenAI GPT models for content generation directly from the command line.
 *   **🔑 Robust API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI for enhanced security and convenience.
 *   **🚀 Fast Project Scaffolding**: Bootstrap new Python projects with an intelligent, AI-generated initial structure using the `--init` option.
+*   **📝 Docstring Automation**: Automatically generate and insert Google-style docstrings for Python modules, classes, and functions using the `--docstring` option.
 *   **⏱️ Rapid Generation**: Transform a nascent project or an existing codebase into a fully documented, tested, and deployable application in moments.
 *   **🔧 Highly Customizable**: Specify project paths, output file names, and tailor content generation with various command-line options.
-
 
 ## Installation 📦
 
@@ -73,13 +72,14 @@ The tool will scan the current directory and generate a `README.md` file with AI
 You can customize the behavior of Docify-AI using the following command-line arguments:
 
 *   **`--path <directory>` / `-p <directory>`**: Specifies the root directory of the project to be analyzed. Defaults to the current working directory (`.`).
-*   **`--output <filename_or_dir>` / `-o <filename_or_dir>`**: Defines the name of the output file or directory. Defaults: `README.md` for docs, `tests/` for tests, `Dockerfile` for Docker, `.github/workflows/ci.yml` for GitHub Actions.
+*   **`--output <filename_or_dir>` / `-o <filename_or_dir>`**: Defines the name of the output file or directory. Defaults: `README.md` for docs, `tests/` for tests, `Dockerfile` for Docker, `.github/workflows/ci.yml` for GitHub Actions, or the modified file for docstring generation.
 *   **`--client <openai|gemini>` / `-c <openai|gemini>`**: Choose the AI client to use for generation. Options are `openai` or `gemini` (default: `gemini`). Case-insensitive.
 *   **`--key <your-api-key>` / `-k <your-api-key>`**: Provide your API key directly. This will take precedence over environment variables.
 *   **`--test` / `-t`**: Generate `pytest` test files instead of a README.
 *   **`--docker`**: Generate a `Dockerfile` for the project.
 *   **`--gha`**: Generate a GitHub Actions (CI/CD) workflow.
 *   **`--init <project_name>`**: Bootstrap a new Python project with the given project name, creating a basic scaffold.
+*   **`--docstring <file_path>`**: Add Google-style docstrings to a specified Python file (relative path from current directory).
 *   **`--ignore-dirs <dir1> <dir2>...`**: A space-separated list of directory names to ignore during scanning (e.g., `.git __pycache__ node_modules`).
 *   **`--ignore-exts <ext1> <ext2>...`**: A space-separated list of file extensions to ignore (e.g., `.tmp .pyc .log`).
 
@@ -125,4 +125,9 @@ You can customize the behavior of Docify-AI using the following command-line arg
 
     ```bash
     docify --init my_new_app
+    ```
+
+8.  To add docstrings to `my_module.py` in the current directory:
+    ```bash
+    docify --docstring my_module.py
     ```

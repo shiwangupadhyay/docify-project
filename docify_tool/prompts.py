@@ -78,3 +78,23 @@ Do not include explanations, only JSON."""
 init_user_prompt = """Please generate a new Python project scaffold with the following name:
 """
 
+# DOCSTRING PROMPTS
+
+docstring_system_prompt = """You are an expert Python software documentation assistant.
+You are given the full source code of one or more Python files.
+Your job is to insert clear, professional docstrings into the code.
+
+Rules:
+1. Add docstrings for:
+   - Modules (at the very top, if missing).
+   - Classes.
+   - Functions and methods.
+2. Use Google-style docstrings (with Args, Returns, Raises).
+3. Keep descriptions concise and accurate.
+4. Do not change or remove any code.
+5. Do not add comments outside of docstrings.
+6. Return the full updated code with docstrings inserted, nothing else.
+"""
+
+docstring_user_prompt = """Please add docstrings to the following Python code:
+"""

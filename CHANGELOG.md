@@ -1,3 +1,8 @@
+# CHANGELOG
+
+## 1.6.2 - 2025-09-08
+- Optimized ```.ipynb```  and dataset files reading to avoid context length explosion.
+
 ## 1.6.0 - 2025-09-07
 - 📝 Added `--notebook` option to generate a starter Jupyter Notebook with analysis pipelines and tests.
 - 📄 Added `--model-card` option to generate a Model Card (`MODEL_CARD.md`) for ML/AI projects.

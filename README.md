@@ -127,11 +127,3 @@ Creates a `MODEL_CARD.md` for AI/ML projects.
 docify --model-card -p /path/to/your/ml_project
 # Output: MODEL_CARD.md within your project.
 ```
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a history of changes and new features.
-
-## License
-
-This project is licensed under the terms of the [MIT License](LICENSE).

@@ -1,12 +1,11 @@
 import os
 import argparse
 import json
-import re
 
-from .dataset_extractor import extract_schema_and_sample
+from .helper import clean_fenced_content
+from .dataset_extractor import extract_and_summarize
 from .scanner import get_project_context, get_project_structure
 from .generator import Generator
-
 
 def main():
     """
@@ -51,7 +50,7 @@ def main():
     parser.add_argument(
         '--ignore-exts',
         nargs='+',
-        default=['.tmp', '.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore'],
+        default=['.tmp', '.pyc', '.env', '.log', '.DS_Store', '.lock', '.gitignore', ".csv", ".tsv", ".json", ".ndjson", ".parquet", ".xlsx", ".xls"],
         help="A space-separated list of file extensions to ignore."
     )
 
@@ -163,10 +162,7 @@ export OPENAI_API_KEY='your-secret-api-key'
             updated_code = generator.generate_docstring_gemini(code_content)
 
         try:
-            cleaned = updated_code.strip()
-            cleaned = re.sub(r"^```(?:python)?", "", cleaned, flags=re.MULTILINE).strip()
-            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE).strip()
-
+            cleaned = clean_fenced_content(updated_code)
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(cleaned)
             print(f"Docstrings successfully added to {file_path}")
@@ -179,7 +175,7 @@ export OPENAI_API_KEY='your-secret-api-key'
 
     if args.notebook:
         # Use lightweight structure for big-context tasks
-        project_context = get_project_structure(args.path)
+        project_context = get_project_structure(args.path, ignore_dirs=args.ignore_dirs)
     else:
         project_context = get_project_context(
             args.path,
@@ -196,15 +192,17 @@ export OPENAI_API_KEY='your-secret-api-key'
     dataset_context = ""
     if args.notebook or args.model_card:
         print("Scanning for datasets...")
-        dataset_info = extract_schema_and_sample(
-                        args.path, 
-                        n=5,
-                        ignore_dirs=args.ignore_dirs,
-                        ignore_exts=args.ignore_exts
-                        )
+        # Extract datasets and generate LLM-friendly summary
+        dataset_context = extract_and_summarize(
+            project_path=args.path,
+            ignore_dirs=args.ignore_dirs
+        )
 
-        if dataset_info:
-            dataset_context = json.dumps(dataset_info, indent=2)
+        if dataset_context:
+            print("Datasets found.")
+        else:
+            print("No supported datasets found in the project.")
+
 
     # --- Tests Generation ---
     if args.test:
@@ -216,23 +214,19 @@ export OPENAI_API_KEY='your-secret-api-key'
 
         tests = None
         try:
-            cleaned = tests_json_str.strip()
-            cleaned = re.sub(r"^```(?:json)?", "", cleaned, flags=re.MULTILINE)
-            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE)
+            cleaned = clean_fenced_content(tests_json_str)
             tests = json.loads(cleaned)
 
         except json.JSONDecodeError:
             print("Initial JSON parsing failed. Asking the model to correct the syntax...")
-            
+
             if args.client == 'openai':
                 fixed_json_str = generator.fix_json_openai(tests_json_str)
             else:
                 fixed_json_str = generator.fix_json_gemini(tests_json_str)
-            
+
             try:
-                cleaned = fixed_json_str.strip()
-                cleaned = re.sub(r"^```(?:json)?", "", cleaned, flags=re.MULTILINE)
-                cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE)
+                cleaned = clean_fenced_content(fixed_json_str)
                 tests = json.loads(cleaned)
                 print("Successfully parsed the corrected JSON.")
             except json.JSONDecodeError as final_e:
@@ -268,7 +262,7 @@ export OPENAI_API_KEY='your-secret-api-key'
         output_file = args.output or "Dockerfile"
         try:
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(docker_content)
+                f.write(clean_fenced_content(docker_content))
             print(f"Successfully generated Dockerfile at {output_file}")
         except Exception as e:
             print(f"Error saving Dockerfile: {e}")
@@ -285,7 +279,7 @@ export OPENAI_API_KEY='your-secret-api-key'
         try:
             os.makedirs(os.path.dirname(output_file), exist_ok=True)
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(gha_content)
+                f.write(clean_fenced_content(gha_content))
             print(f"Successfully generated GitHub Actions workflow at {output_file}")
         except Exception as e:
             print(f"Error saving GitHub Actions workflow: {e}")
@@ -293,22 +287,16 @@ export OPENAI_API_KEY='your-secret-api-key'
     # --- Startup Notebook Generation ---
     elif args.notebook:
         print("Mode: Generating Jupyter Notebook...")
-        
+
         if args.client == 'openai':
             nb_content = generator.generate_notebook_openai(project_context, dataset_context)
         else:
             nb_content = generator.generate_notebook_gemini(project_context, dataset_context)
 
-        # Remove top/bottom ``` if present
-        if nb_content.startswith("```"):
-            nb_content = "\n".join(nb_content.splitlines()[1:])
-        if nb_content.endswith("```"):
-            nb_content = "\n".join(nb_content.splitlines()[:-1])
-
         output_file = args.output or "notebook.ipynb"
         try:
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(nb_content)
+                f.write(clean_fenced_content(nb_content))
             print(f"Successfully generated Jupyter Notebook at {output_file}")
         except Exception as e:
             print(f"Error saving notebook: {e}")
@@ -323,21 +311,13 @@ export OPENAI_API_KEY='your-secret-api-key'
         else:
             mc_content = generator.generate_model_card_gemini(project_context, dataset_context)
 
-        # Remove top/bottom ``` if present
-        if mc_content.startswith("```"):
-            mc_content = "\n".join(mc_content.splitlines()[1:])
-        if mc_content.endswith("```"):
-            mc_content = "\n".join(mc_content.splitlines()[:-1])
-
         output_file = args.output or "MODEL_CARD.md"
         try:
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(mc_content)
+                f.write(clean_fenced_content(mc_content))
             print(f"Successfully generated Model Card at {output_file}")
         except Exception as e:
             print(f"Error saving Model Card: {e}")
-
-
 
 
 # --- Default Action: README/Docs Generation ---
@@ -350,22 +330,11 @@ export OPENAI_API_KEY='your-secret-api-key'
 
         output_file = args.output or "README.md"
         try:
-            cleaned_content = readme_content.strip()
-
-            if cleaned_content.startswith("```"):
-                first_line_end = cleaned_content.find("\n")
-                if first_line_end != -1:
-                    cleaned_content = cleaned_content[first_line_end:].strip()
-
-            if cleaned_content.endswith("```"):
-                cleaned_content = cleaned_content[:-3].strip()
-
             with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(cleaned_content)
+                f.write(clean_fenced_content(readme_content))
             print(f"Successfully generated and saved to {output_file}")
         except Exception as e:
             print(f"Error saving README/docs: {e}")
-
 
 
 if __name__ == "__main__":

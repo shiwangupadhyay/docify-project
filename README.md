@@ -132,14 +132,6 @@ docify --model-card -p /path/to/your/ml_project
 
 See [CHANGELOG.md](CHANGELOG.md) for a history of changes and new features.
 
-## Testing
-
-To run the internal test suite for Docify-AI (for developers):
-
-```bash
-pytest
-```
-
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).

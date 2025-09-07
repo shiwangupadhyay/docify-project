@@ -1,6 +1,6 @@
 [project]
 name = "docify-ai" 
-version = "1.5.0" 
+version = "1.6.0" 
 dynamic = ["readme"]
 authors = [
   { name = "Shiwang Upadhyay"}, 
@@ -31,7 +31,13 @@ keywords = [
     "automation",
     "developer-tools",
     "cli",
-    "docstrings"
+    "docstrings",
+    "notebook-generation",
+    "automatic-data-cleaning",
+    "auto-EDA",
+    "notebook-generator",
+    "model-card",
+    "model-card-generator"
 ]
 
 [tool.setuptools]

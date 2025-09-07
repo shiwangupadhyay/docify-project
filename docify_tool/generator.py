@@ -87,4 +87,67 @@ class Generator:
     def generate_docstring_openai(self, project_context: str) -> str:
         print("Docify-AI is adding docstrings with OpenAI...")
         return self._openai_generate(docstring_system_prompt, docstring_user_prompt, project_context)
+    
+    def generate_notebook_gemini(self, project_context: str, dataset_context: str) -> str:
+        print("Docify-AI is generating a Jupyter Notebook with Gemini...")
+        return self._gemini_generate(
+            notebook_system_prompt,
+            notebook_user_prompt.format(
+                project_context=project_context,
+                dataset_context=dataset_context
+            ),
+            ""
+        )
+
+    def generate_notebook_openai(self, project_context: str, dataset_context: str) -> str:
+        print("Docify-AI is generating a Jupyter Notebook with OpenAI...")
+        return self._openai_generate(
+            notebook_system_prompt,
+            notebook_user_prompt.format(
+                project_context=project_context,
+                dataset_context=dataset_context
+            ),
+            ""
+        )
+
+    def generate_model_card_gemini(self, project_context: str, dataset_context: str) -> str:
+        print("Docify-AI is generating a MODEL_CARD.md with Gemini...")
+        return self._gemini_generate(
+            model_card_system_prompt,
+            model_card_user_prompt.format(
+                project_context=project_context,
+                dataset_context=dataset_context
+            ),
+            ""
+        )
+
+    def generate_model_card_openai(self, project_context: str, dataset_context: str) -> str:
+        print("Docify-AI is generating a MODEL_CARD.md with OpenAI...")
+        return self._openai_generate(
+            model_card_system_prompt,
+            model_card_user_prompt.format(
+                project_context=project_context,
+                dataset_context=dataset_context
+            ),
+            ""
+        )
+
+    def fix_json_gemini(self, broken_json_string: str) -> str:
+        """Asks Gemini to fix a broken JSON string."""
+        print("Attempting to fix JSON with Gemini...")
+        return self._gemini_generate(
+            system_prompt=json_fix_system_prompt,
+            user_prompt=broken_json_string,
+            context=""
+        )
+
+    def fix_json_openai(self, broken_json_string: str) -> str:
+        """Asks OpenAI to fix a broken JSON string."""
+        print("Attempting to fix JSON with OpenAI...")
+        return self._openai_generate(
+            system_prompt=json_fix_system_prompt,
+            user_prompt=broken_json_string,
+            context=""
+        )
+
 

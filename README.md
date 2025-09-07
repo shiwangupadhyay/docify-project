@@ -1,133 +1,145 @@
-# Docify AI 🚀: Intelligent Documentation & Test Generation for Your Code
+# Docify-AI
+
+An intelligent command-line interface (CLI) that leverages AI to automate documentation, testing, and project scaffolding for local software projects.
 
 [![PyPI - Version](https://img.shields.io/pypi/v/docify-ai.svg?style=flat-square)](https://pypi.org/project/docify-ai/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/docify-ai.svg?style=flat-square)](https://pypi.org/project/docify-ai/)
 [![Downloads](https://static.pepy.tech/badge/docify-ai)](https://pepy.tech/project/docify-ai)
 
-A versatile AI-powered command-line tool for instantly generating comprehensive `README.md` files, pytest tests, Dockerfiles, and GitHub Actions CI/CD workflows for your local projects, powered by Google Gemini and OpenAI GPT models.
 
-## Key Features ✨
+## Key Features
 
-*   **🤖 AI-Powered Content Generation**: Leverages large language models (Google Gemini and OpenAI GPT) to write human-quality `README.md` files, `pytest` tests, `Dockerfile`s, and GitHub Actions CI/CD workflows.
-*   **💡 Versatile Output Formats**: Generate comprehensive project documentation, runnable unit tests, containerization configurations, or automation workflows.
-*   **📂 Intelligent Project Analysis**: Scans your project directory, intelligently ignoring irrelevant files and directories (configurable with `--ignore-dirs` and `--ignore-exts`), to deeply understand its purpose, technologies, and structure.
-*   **⚙️ Flexible AI Client Selection**: Seamlessly choose between Google Gemini and OpenAI GPT models for content generation directly from the command line.
-*   **🔑 Robust API Key Management**: Supports API keys via environment variables or direct command-line arguments for both Gemini and OpenAI for enhanced security and convenience.
-*   **🚀 Fast Project Scaffolding**: Bootstrap new Python projects with an intelligent, AI-generated initial structure using the `--init` option.
-*   **📝 Docstring Automation**: Automatically generate and insert Google-style docstrings for Python modules, classes, and functions using the `--docstring` option.
-*   **⏱️ Rapid Generation**: Transform a nascent project or an existing codebase into a fully documented, tested, and deployable application in moments.
-*   **🔧 Highly Customizable**: Specify project paths, output file names, and tailor content generation with various command-line options.
+*   **AI-Powered Documentation Generation**: Automatically create detailed and domain-specific `README.md` files for any project.
+*   **Automated Test Suite Generation**: Generate runnable `pytest` test files covering various scenarios.
+*   **Dockerfile Generation**: Create optimized `Dockerfile`s for containerizing your applications.
+*   **GitHub Actions Workflow Generation**: Develop `YAML` configurations for CI/CD pipelines (e.g., build, test, deploy).
+*   **Project Scaffolding**: Bootstrap new Python projects with a predefined structure.
+*   **Docstring Generation**: Automatically add PEP 257–compliant docstrings to Python functions, classes, and modules.
+*   **Jupyter Notebook Generation**: Kickstart data analysis or ML projects with a basic Jupyter Notebook including data loading, EDA, and model training/evaluation pipelines.
+*   **Model Card Generation**: Create `MODEL_CARD.md` for ML/AI projects, detailing model information, intended use, datasets, and ethical considerations.
+*   **Flexible AI Clients**: Support for both Google Gemini and OpenAI GPT models.
+*   **Intelligent File Scanning**: Ignores specified directories and file extensions to focus on relevant code.
+*   **Dataset Schema Extraction**: Automatically infers schema and samples from common data formats (`.csv`, `.json`, etc.) to inform AI generations for data-centric tasks.
 
-## Installation 📦
 
-Docify-AI is available on PyPI and can be installed on any system with Python 3.8 or newer using `pip`.
+## Installation
+
+Docify-AI can be installed directly from PyPI using `pip`:
 
 ```bash
 pip install docify-ai
 ```
 
-## Usage 🚀
+## Usage
 
-Using Docify-AI is straightforward, involving a one-time API key setup and a simple command execution.
+The `docify` command is your entry point to all functionalities.
 
-### 1. Set Your API Key
+### API Key Setup
 
-Docify-AI requires an API key for the chosen AI model (Google Gemini or OpenAI). You can obtain a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) for Gemini, or from the [OpenAI platform](https://platform.openai.com/api-keys) for OpenAI.
-
-Once you have your key, set it as an environment variable:
-
-*   For **Google Gemini**: `GEMINI_API_KEY`
-*   For **OpenAI**: `OPENAI_API_KEY`
-
-**For macOS / Linux (bash/zsh):**
+You must set your `GEMINI_API_KEY` or `OPENAI_API_KEY` environment variable or provide it via the `--key` argument.
 
 ```bash
-export GEMINI_API_KEY='your-gemini-secret-api-key'
-# OR
-export OPENAI_API_KEY='your-openai-secret-api-key'
-```
-*(To make this permanent across terminal sessions, add the line to your shell's configuration file, e.g., `~/.zshrc` or `~/.bashrc`.)*
-
-**For Windows (PowerShell):**
-
-```powershell
-$Env:GEMINI_API_KEY="your-gemini-secret-api-key"
-# OR
-$Env:OPENAI_API_KEY="your-openai-secret-api-key"
+# Example for setting environment variable (Linux/macOS)
+export GEMINI_API_KEY='YOUR_GEMINI_API_KEY'
+# or for OpenAI
+export OPENAI_API_KEY='YOUR_OPENAI_API_KEY'
 ```
 
-Alternatively, you can pass the API key directly via the `--key` argument, which will override the environment variable.
+### Global Options
 
-### 2. Run Docify-AI
+*   `--path`, `-p`: Root directory of the project (default: current directory `.` ).
+*   `--output`, `-o`: Custom output file/folder name.
+*   `--client`, `-c`: Choose AI client (`openai` or `gemini`, default: `gemini`). Case-insensitive.
+*   `--key`, `-k`: Provide API key directly (overrides environment variable).
+*   `--ignore-dirs`: Space-separated list of directories to ignore during scanning.
+*   `--ignore-exts`: Space-separated list of file extensions to ignore during scanning.
 
-Navigate to the root directory of the project you wish to document and simply run the `docify` command. By default, it uses the Gemini model to generate a README.
+### CLI Commands
+
+#### 1. Generate `README.md` (Default Action)
+
+If no specific action flag is provided, `docify` generates a `README.md` for the project.
 
 ```bash
-docify
+docify -p /path/to/your/project
+# Output will be saved to /path/to/your/project/README.md
 ```
-The tool will scan the current directory and generate a `README.md` file with AI-powered content.
 
-### Command-Line Options
+#### 2. Generate Pytest Test Files
 
-You can customize the behavior of Docify-AI using the following command-line arguments:
+Creates a `tests/` directory with `pytest` compatible test modules.
 
-*   **`--path <directory>` / `-p <directory>`**: Specifies the root directory of the project to be analyzed. Defaults to the current working directory (`.`).
-*   **`--output <filename_or_dir>` / `-o <filename_or_dir>`**: Defines the name of the output file or directory. Defaults: `README.md` for docs, `tests/` for tests, `Dockerfile` for Docker, `.github/workflows/ci.yml` for GitHub Actions, or the modified file for docstring generation.
-*   **`--client <openai|gemini>` / `-c <openai|gemini>`**: Choose the AI client to use for generation. Options are `openai` or `gemini` (default: `gemini`). Case-insensitive.
-*   **`--key <your-api-key>` / `-k <your-api-key>`**: Provide your API key directly. This will take precedence over environment variables.
-*   **`--test` / `-t`**: Generate `pytest` test files instead of a README.
-*   **`--docker`**: Generate a `Dockerfile` for the project.
-*   **`--gha`**: Generate a GitHub Actions (CI/CD) workflow.
-*   **`--init <project_name>`**: Bootstrap a new Python project with the given project name, creating a basic scaffold.
-*   **`--docstring <file_path>`**: Add Google-style docstrings to a specified Python file (relative path from current directory).
-*   **`--ignore-dirs <dir1> <dir2>...`**: A space-separated list of directory names to ignore during scanning (e.g., `.git __pycache__ node_modules`).
-*   **`--ignore-exts <ext1> <ext2>...`**: A space-separated list of file extensions to ignore (e.g., `.tmp .pyc .log`).
+```bash
+docify --test -p /path/to/your/project
+# Output: tests/ directory within your project, e.g., tests/test_main.py
+```
 
-**Examples:**
+#### 3. Generate Dockerfile
 
-1.  To document a project located at `/path/to/my-other-project` and save the output to `PROJECT_DOCS.md` using the default Gemini model:
+Creates a `Dockerfile` for your project.
 
-    ```bash
-    docify --path /path/to/my-other-project --output PROJECT_DOCS.md
-    ```
+```bash
+docify --docker -p /path/to/your/project
+# Output: Dockerfile within your project
+```
 
-2.  To use the OpenAI client for README generation:
+#### 4. Generate GitHub Actions Workflow
 
-    ```bash
-    docify --client openai
-    ```
+Creates a `.github/workflows/ci.yml` file for CI/CD.
 
-3.  To use the OpenAI client and provide the API key directly (overriding any environment variable):
+```bash
+docify --gha -p /path/to/your/project
+# Output: .github/workflows/ci.yml within your project
+```
 
-    ```bash
-    docify --client openai --key sk-YOUR_OPENAI_API_KEY
-    ```
+#### 5. Bootstrap a New Python Project
 
-4.  To generate `pytest` tests for the current project using the Gemini client, ignoring `dist` and `build` directories:
+Generates a basic Python project structure.
 
-    ```bash
-    docify --test --client gemini --ignore-dirs dist build
-    ```
+```bash
+docify --init my_new_project
+# Output: A new directory named 'my_new_project' with basic Python project files.
+```
 
-5.  To generate a `Dockerfile` for the current project:
+#### 6. Add Docstrings to a Python File
 
-    ```bash
-    docify --docker
-    ```
+Inserts Google-style docstrings into a specified Python file.
 
-6.  To generate a GitHub Actions workflow for the current project:
+```bash
+docify --docstring /path/to/your/project/my_module.py
+# The specified Python file will be updated in place.
+```
 
-    ```bash
-    docify --gha
-    ```
+#### 7. Generate a Jupyter Notebook
 
-7.  To initialize a new Python project named `my_new_app`:
+Creates a starter Jupyter Notebook, especially useful for data-centric projects.
 
-    ```bash
-    docify --init my_new_app
-    ```
+```bash
+docify --notebook -p /path/to/your/data_project
+# Output: notebook.ipynb within your project.
+```
 
-8.  To add docstrings to `my_module.py` in the current directory:
-    ```bash
-    docify --docstring my_module.py
-    ```
+#### 8. Generate a Model Card
+
+Creates a `MODEL_CARD.md` for AI/ML projects.
+
+```bash
+docify --model-card -p /path/to/your/ml_project
+# Output: MODEL_CARD.md within your project.
+```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a history of changes and new features.
+
+## Testing
+
+To run the internal test suite for Docify-AI (for developers):
+
+```bash
+pytest
+```
+
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).

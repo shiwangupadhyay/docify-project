@@ -28,3 +28,15 @@ def get_project_context(root_dir, ignore_dirs, ignore_exts):
             full_context.append("\n\n")
 
     return "".join(full_context)
+
+
+def get_project_structure(path):
+    tree = []
+    for root, dirs, files in os.walk(path):
+        rel = os.path.relpath(root, path)
+        if rel.startswith("."):
+            continue
+        tree.append(f"{rel}/")
+        for f in files:
+            tree.append(f"  {f}")
+    return "\n".join(tree)

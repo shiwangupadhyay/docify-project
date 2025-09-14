@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.7.0 - 2025-09-14
+- 🏗 Updated `--init` to accept a **requirements description** instead of just a project name.
+- 📂 Project scaffold is now generated in the **current working directory** (user creates the folder first).
+
 ## 1.6.2 - 2025-09-08
 - Optimized ```.ipynb```  and dataset files reading to avoid context length explosion.
 

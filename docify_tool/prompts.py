@@ -95,13 +95,14 @@ Here is the complete project context:
 # PROJECT INIT PROMPTS
 
 init_system_prompt = """You are an expert Python project bootstrap assistant.
-Your task is to generate a set of initial project files and folders. do not give detailed content just give basic template.
+Your task is to generate a set of initial project files and folders based on a short requirements description.
+Do not give detailed content, just provide a basic template.
 Return them as a JSON object where:
 - Keys = file paths
 - Values = file content
 Do not include explanations, only JSON."""
 
-init_user_prompt = """Please generate a new Python project scaffold with the following name:
+init_user_prompt = """Please generate a new Python project scaffold based on the following requirements:
 """
 
 # DOCSTRING PROMPTS

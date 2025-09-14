@@ -75,7 +75,7 @@ def main():
     action_group.add_argument(
         '--init',
         type=str,
-        help='Bootstrap a new Python project with the given project name.'
+        help='Bootstrap a new Python project based on a short requirements description.'
     )
     action_group.add_argument(
         '--docstring',
@@ -129,21 +129,27 @@ export OPENAI_API_KEY='your-secret-api-key'
     generator = Generator(api_key)
 
     # --- Project Init ---
+        # --- Project Init ---
     if args.init:
-        project_name = args.init
-        print(f"Bootstrapping new Python project: {project_name}")
-        if args.client == 'openai':
-            scaffold = generator.generate_project_init_openai(project_name)
-        else:
-            scaffold = generator.generate_project_init_gemini(project_name)
+        requirements = args.init
+        project_root = os.path.abspath(args.path)  # Default: current working dir
+        print(f"Bootstrapping Python project in {project_root} based on requirements: {requirements}")
 
+        if args.client == 'openai':
+            scaffold = generator.generate_project_init_openai(requirements)
+        else:
+            scaffold = generator.generate_project_init_gemini(requirements)
+
+        # Write scaffold files in current folder
         for filepath, content in scaffold.items():
-            out_path = os.path.join(project_name, filepath)
+            out_path = os.path.join(project_root, filepath)
             os.makedirs(os.path.dirname(out_path), exist_ok=True)
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(content)
-        print(f"Project {project_name} initialized successfully.")
+
+        print("\nProject scaffold generated successfully!")
         return
+
 
     # --- Docstring Generation ---
     if args.docstring:
